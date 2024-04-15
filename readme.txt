@@ -5,7 +5,7 @@ Tags:login as user, user switching, fast user switching, switch user, users, use
 Requires PHP: 7.4
 Requires at least: 6.3
 Tested up to: 6.5
-Stable tag: 1.5
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -52,7 +52,7 @@ After Plugin Active go to Settings-> Login As User.
 7. You will see this CTA after minimizing the main CTA, you can click on this to open the main CTA which have "Back To Your Account" Button.
 
 == Changelog ==
-= 1.5 =
+= 1.4.1 =
 *Tested up to wp version 6.5
 
 = 1.4 =
