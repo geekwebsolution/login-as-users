@@ -146,14 +146,14 @@
     top: 0 !important;
     min-width: 0;
     white-space: nowrap;
-    max-width: 170px;
+    max-width: 100%;
 }
 
 .gwslau-login-as-btn span {
-    display: block;
+    display: inline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-left: 4px;
+    margin-left: 2px;
     word-wrap: unset;
 }

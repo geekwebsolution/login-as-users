@@ -3,7 +3,7 @@
 Plugin Name: Login As Users
 Description: Using this plugin, admin can access user's account in one click.
 Author: Geek Code Lab
-Version: 1.4.1
+Version: 1.4.2
 Author URI: https://geekcodelab.com/
 Text Domain: gwslau_login_as_user
 */
@@ -16,7 +16,7 @@ if(!defined("GWSLAU_PLUGIN_DIR_PATH"))
 if(!defined("GWSLAU_PLUGIN_URL"))
 	define("GWSLAU_PLUGIN_URL",plugins_url().'/'.basename(dirname(__FILE__)));	
 
-define("GWSLAU_BUILD",'1.4.1');
+define("GWSLAU_BUILD",'1.4.2');
 
 register_activation_hook( __FILE__, 'gwslau_reg_activation_callback' );
 function gwslau_reg_activation_callback() {
