@@ -3,7 +3,7 @@
 Plugin Name: Login As Users
 Description: Using this plugin, admin can access user's account in one click.
 Author: Geek Code Lab
-Version: 1.4.2
+Version: 1.4.3
 Author URI: https://geekcodelab.com/
 Text Domain: gwslau_login_as_user
 */
@@ -16,13 +16,13 @@ if(!defined("GWSLAU_PLUGIN_DIR_PATH"))
 if(!defined("GWSLAU_PLUGIN_URL"))
 	define("GWSLAU_PLUGIN_URL",plugins_url().'/'.basename(dirname(__FILE__)));	
 
-define("GWSLAU_BUILD",'1.4.2');
+define("GWSLAU_BUILD",'1.4.3');
 
 register_activation_hook( __FILE__, 'gwslau_reg_activation_callback' );
 function gwslau_reg_activation_callback() {
+	session_abort();
+
 	$site_domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
-	setcookie("gwslau_new_user_id", "", time() - 3600, '/', $site_domain, false);
-	setcookie("gwslau_old_user_id", "", time() - 3600, '/', $site_domain, false);
 	
 	if(isset($_SESSION['gwslau_new_user_id'])){
 		unset($_SESSION['gwslau_new_user_id']);
@@ -81,11 +81,12 @@ function gwslau_enqueue_style_footer(){
 
 add_action( 'wp_ajax_gwslau_login_as_user_action', 'gwslau_login_as_user_action' );
 function gwslau_login_as_user_action(){
+	session_start();
+
 	$user_id = intval( $_POST['user_id'] );
 	$admin_id = intval( $_POST['admin_id'] );
 	$site_domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
-	setcookie('gwslau_new_user_id', $user_id, time()+31556926, '/', $site_domain, false);
-	setcookie('gwslau_old_user_id', $admin_id, time()+31556926, '/', $site_domain, false);
+	
 	$_SESSION["gwslau_new_user_id"] = $user_id;
 	$_SESSION["gwslau_old_user_id"] = $admin_id;
 	die();
@@ -93,10 +94,9 @@ function gwslau_login_as_user_action(){
 
 add_action( 'init', 'gwslau_login_selected_user',1 );
 function gwslau_login_selected_user() {
-	if(isset($_COOKIE['gwslau_new_user_id']) && $_COOKIE['gwslau_new_user_id'] !='' && isset($_COOKIE['gwslau_old_user_id']) && $_COOKIE['gwslau_old_user_id'] != ''){
-		wp_set_current_user(absint($_COOKIE['gwslau_new_user_id']));
-		show_admin_bar(false);
-	}else if(isset($_SESSION['gwslau_new_user_id']) && $_SESSION['gwslau_new_user_id'] !='' && isset($_SESSION['gwslau_old_user_id']) && $_SESSION['gwslau_old_user_id'] != ''){
+	session_start();
+
+	if(isset($_SESSION['gwslau_new_user_id']) && $_SESSION['gwslau_new_user_id'] !='' && isset($_SESSION['gwslau_old_user_id']) && $_SESSION['gwslau_old_user_id'] != ''){
 		wp_set_current_user(absint($_SESSION['gwslau_new_user_id']));
 		show_admin_bar(false);
 	}
@@ -106,15 +106,12 @@ function gwslau_login_selected_user() {
 add_action( 'wp_footer', 'gwslau_add_footer_logout_module' );
 function gwslau_add_footer_logout_module(){		
 	$new_user_set = '';				
-	$old_user_set = '';    			
-	if(isset($_COOKIE['gwslau_new_user_id']) && $_COOKIE['gwslau_new_user_id'] !='' && isset($_COOKIE['gwslau_old_user_id']) && $_COOKIE['gwslau_old_user_id'] != ''){
-		$new_user_set = absint($_COOKIE['gwslau_new_user_id']);				
-		$old_user_set = absint($_COOKIE['gwslau_old_user_id']);
-		
-	}else if(isset($_SESSION['gwslau_new_user_id']) && $_SESSION['gwslau_new_user_id'] !='' && isset($_SESSION['gwslau_old_user_id']) && $_SESSION['gwslau_old_user_id'] != ''){
+	$old_user_set = '';
+
+	if(isset($_SESSION['gwslau_new_user_id']) && $_SESSION['gwslau_new_user_id'] !='' && isset($_SESSION['gwslau_old_user_id']) && $_SESSION['gwslau_old_user_id'] != ''){
 		$new_user_set = absint($_SESSION['gwslau_new_user_id']);				
 		$old_user_set = absint($_SESSION['gwslau_old_user_id']);				
-	}	
+	}
 	
 	if($new_user_set !='' && $old_user_set != ''){
 		$user_info = get_userdata($new_user_set);
@@ -156,9 +153,9 @@ function gwslau_add_footer_logout_module(){
 add_action('wp_ajax_gwslau_login_return_admin', 'gwslau_login_return_admin');
 add_action('wp_ajax_nopriv_gwslau_login_return_admin', 'gwslau_login_return_admin');
 function gwslau_login_return_admin(){
+	session_start();
+
 	$site_domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
-	setcookie("gwslau_new_user_id", "", time() - 3600, '/', $site_domain, false);
-	setcookie("gwslau_old_user_id", "", time() - 3600, '/', $site_domain, false);
 	
 	if(isset($_SESSION['gwslau_new_user_id'])){
 		unset($_SESSION['gwslau_new_user_id']);
