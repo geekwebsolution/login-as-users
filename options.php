@@ -11,7 +11,7 @@ function gwslau_user_table_new_column( $column ) {
 	if(!gwslau_user_conditional($options)){
 		if(isset($options['gwslau_loginas_for']) && !empty($options['gwslau_loginas_for'])){
             if(in_array("users_page", $options['gwslau_loginas_for'])){
-				$column['login-as'] = __('Login As','gwslau_login_as_user');
+				$column['login-as'] = __('Login As','login-as-users');
 			}
         }
 	}
@@ -30,21 +30,21 @@ function gwslau_user_table_new_value( $val, $column_name, $user_id ) {
 				$user_info = get_userdata($user_id);
 				if($user_info) {
 					if($user_id == get_current_user_id()){
-						return __('This user','gwslau_login_as_user');
+						return __('This user','login-as-users');
 					}
 					$user_roles=$user_info->roles;
 					if(in_array('administrator', $user_roles)){
-						return __('Administrator user','gwslau_login_as_user');
+						return __('Administrator user','login-as-users');
 					}
 					$user_name_type = $options['gwslau_loginas_name_show'];
 					$user_name_data = gwslau_get_display_name($user_id, $user_name_type);
 
 					$link = user_switcher::maybe_switch_url( $user_info );
 
-					$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
-					return __($links,'gwslau_login_as_user');
+					$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'login-as-users' ));
+					return __($links,'login-as-users');
 				}else{
-					return __('User not exist','gwslau_login_as_user');
+					return __('User not exist','login-as-users');
 				}
 			}
 		break;
@@ -67,7 +67,7 @@ function gwslau_order_table_new_column( $columns ) {
 				if(!gwslau_user_conditional($options)){
 					if(isset($options['gwslau_loginas_for']) && !empty($options['gwslau_loginas_for'])){
 						if(in_array("orders_page", $options['gwslau_loginas_for'])){
-							$reordered_columns['Login-as'] = __( 'Login As','gwslau_login_as_user');
+							$reordered_columns['Login-as'] = __( 'Login As','login-as-users');
 						}
 					}
 				}
@@ -106,29 +106,29 @@ function gwslau_orders_column_content( $order ){
 	$user_id = $order->get_user_id();
 	if($user_id != 0){
 		if($user_id == get_current_user_id()){
-			return _e('This user','gwslau_login_as_user');
+			return _e('This user','login-as-users');
 		}
 		$user_info = get_userdata($user_id);
 		if($user_info) {
 			$user_roles=$user_info->roles;
 			$user_roles = array_filter(array_map('trim', $user_roles));
 			if(in_array('administrator', $user_roles)){
-				return  _e('Administrator user','gwslau_login_as_user');
+				return  _e('Administrator user','login-as-users');
 			}
 			$user_name_type = $options['gwslau_loginas_name_show'];
 			$user_name_data = gwslau_get_display_name($user_id, $user_name_type);
 			if(!empty($user_info)){
 				$link = user_switcher::maybe_switch_url( $user_info );
 
-				$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
-				return _e($links,'gwslau_login_as_user');
+				$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'login-as-users' ));
+				return _e($links,'login-as-users');
 			}
 		}else{
 			return _e('User not exist.');
 		}
 	}
 	else{
-		_e('Visitor','gwslau_login_as_user');
+		_e('Visitor','login-as-users');
 	}
 }
 
@@ -149,8 +149,8 @@ function gwslau_add_personal_options( WP_User $user )
 					
 					$link = user_switcher::maybe_switch_url( $user );
 
-					$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user->ID),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
-					return _e($links,'gwslau_login_as_user');
+					$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user->ID),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'login-as-users' ));
+					return _e($links,'login-as-users');
 				}
 			}
 		}
@@ -188,27 +188,27 @@ function gwslau_login_as_user_metabox($object){
 	$options = get_option( 'gwslau_loginas_options' );
 	if($user_id != 0){
 		if($user_id == get_current_user_id()){
-			return _e('This user','gwslau_login_as_user');
+			return _e('This user','login-as-users');
 		}
 		$user_info = get_userdata($user_id);
 		if($user_info) {
 			$user_roles=$user_info->roles;
 			if(in_array('administrator', $user_roles)){
-				return _e('Administrator user','gwslau_login_as_user');
+				return _e('Administrator user','login-as-users');
 			}
 			if(!empty($user_info)){
 				$user_name_type = $options['gwslau_loginas_name_show'];
 				$user_name_data = gwslau_get_display_name($user_id, $user_name_type);
 				$link = user_switcher::maybe_switch_url( $user_info );
 
-				$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
-				return _e($links,'gwslau_login_as_user');
+				$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'login-as-users' ));
+				return _e($links,'login-as-users');
 			}
 		}else{
-			return _e('User not exist.','gwslau_login_as_user');
+			return _e('User not exist.','login-as-users');
 		}
 	}
 	else{
-		return _e('Visitor','gwslau_login_as_user');
+		return _e('Visitor','login-as-users');
 	}
 }
