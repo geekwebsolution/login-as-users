@@ -2,6 +2,9 @@
 if(!defined('ABSPATH')) exit;
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
+/**
+ * Manage user columns
+ */
 add_filter( 'manage_users_columns', 'gwslau_user_table_new_column');
 function gwslau_user_table_new_column( $column ) {
 	$options = get_option( 'gwslau_loginas_options');
@@ -15,6 +18,9 @@ function gwslau_user_table_new_column( $column ) {
 	return $column;
 }
 
+/**
+ * Return content of custom user columns
+ */
 add_filter( 'manage_users_custom_column', 'gwslau_user_table_new_value', 10, 3 );
 function gwslau_user_table_new_value( $val, $column_name, $user_id ) {
 	switch ($column_name) {
@@ -32,7 +38,10 @@ function gwslau_user_table_new_value( $val, $column_name, $user_id ) {
 					}
 					$user_name_type = $options['gwslau_loginas_name_show'];
 					$user_name_data = gwslau_get_display_name($user_id, $user_name_type);
-					$links = sprintf('<a href="#" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
+
+					$link = user_switcher::maybe_switch_url( $user_info );
+
+					$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
 					return __($links,'gwslau_login_as_user');
 				}else{
 					return __('User not exist','gwslau_login_as_user');
@@ -43,6 +52,9 @@ function gwslau_user_table_new_value( $val, $column_name, $user_id ) {
 	return $val;
 }
 
+/**
+ * Creates woocommerce order list custom column 
+ */
 add_filter( 'manage_edit-shop_order_columns', 'gwslau_order_table_new_column');
 add_filter( 'woocommerce_shop_order_list_table_columns', 'gwslau_order_table_new_column');
 function gwslau_order_table_new_column( $columns ) {
@@ -81,6 +93,9 @@ function gwslau_hpos_shop_order_column($column, $order) {
     gwslau_orders_column_content($order);
 }
 
+/**
+ * Returns content of woocommerce order list custom column 
+ */
 function gwslau_orders_column_content( $order ){
 	$options = get_option( 'gwslau_loginas_options' );
 	if(gwslau_user_conditional($options)){
@@ -103,7 +118,9 @@ function gwslau_orders_column_content( $order ){
 			$user_name_type = $options['gwslau_loginas_name_show'];
 			$user_name_data = gwslau_get_display_name($user_id, $user_name_type);
 			if(!empty($user_info)){
-				$links = sprintf('<a href="#" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
+				$link = user_switcher::maybe_switch_url( $user_info );
+
+				$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
 				return _e($links,'gwslau_login_as_user');
 			}
 		}else{
@@ -115,6 +132,9 @@ function gwslau_orders_column_content( $order ){
 	}
 }
 
+/**
+ * Login as link inside user edit page
+ */
 add_action('personal_options', 'gwslau_add_personal_options');
 function gwslau_add_personal_options( WP_User $user ) 
 {
@@ -126,7 +146,10 @@ function gwslau_add_personal_options( WP_User $user )
 				{
 					$user_name_type = $options['gwslau_loginas_name_show'];
 					$user_name_data = gwslau_get_display_name($user->ID, $user_name_type);
-					$links = sprintf('<a href="#" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', absint($user->ID),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
+					
+					$link = user_switcher::maybe_switch_url( $user );
+
+					$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user->ID),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
 					return _e($links,'gwslau_login_as_user');
 				}
 			}
@@ -134,6 +157,9 @@ function gwslau_add_personal_options( WP_User $user )
 	}
 }
 
+/**
+ * Login as link inside woocommerce order edit page
+ */
 add_action('add_meta_boxes', 'gwslau_add_login_as_user_metabox');
 function gwslau_add_login_as_user_metabox()
 {
@@ -151,6 +177,9 @@ function gwslau_add_login_as_user_metabox()
 	}
 }
 
+/**
+ * Metabox for Login as link inside order edit page
+ */
 function gwslau_login_as_user_metabox($object){
 	$order = is_a( $object, 'WP_Post' ) ? wc_get_order( $object->ID ) : $object;
 	
@@ -170,7 +199,9 @@ function gwslau_login_as_user_metabox($object){
 			if(!empty($user_info)){
 				$user_name_type = $options['gwslau_loginas_name_show'];
 				$user_name_data = gwslau_get_display_name($user_id, $user_name_type);
-				$links = sprintf('<a href="#" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
+				$link = user_switcher::maybe_switch_url( $user_info );
+
+				$links = sprintf('<a href="%s" class="page-title-action gwslau-login-as-btn" data-user-id="%d" data-admin-id="%d">%s</a>', $link, absint($user_id),absint(get_current_user_id()), __( 'Login as <span>'.$user_name_data.'</span>', 'gwslau_login_as_user' ));
 				return _e($links,'gwslau_login_as_user');
 			}
 		}else{
@@ -179,7 +210,5 @@ function gwslau_login_as_user_metabox($object){
 	}
 	else{
 		return _e('Visitor','gwslau_login_as_user');
-		
 	}
 }
-?>
