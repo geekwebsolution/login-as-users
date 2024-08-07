@@ -1,6 +1,9 @@
 <?php
 if(!defined('ABSPATH')) exit;
 
+/**
+ * Login as user: Admin menu
+ */
 add_action('admin_menu', 'gwslau_gwslau_loginas_options_page');
 function gwslau_gwslau_loginas_options_page() {
 	add_menu_page(
@@ -13,7 +16,7 @@ function gwslau_gwslau_loginas_options_page() {
 }
 
 function gwslau_login_as_settings_page_html() {
-		 
+	
 	if ( ! current_user_can( 'administrator' ) ) {
 		return;
 	}
@@ -25,18 +28,13 @@ function gwslau_login_as_settings_page_html() {
 	
 	$option_data = get_option('gwslau_loginas_options');
 	?>
-	<h2><?php _e( 'Login As Customer or User', 'gwslau_login_as_user' );?></h2>
+
+	<h1><?php _e( 'Login As Customer or User', 'gwslau_login_as_user' );?></h1>
 	<div id="">
 		<div id="dashboard-widgets" class="metabox-holder">
 			<div id="" class="">
 				<div id="side-sortables" class="meta-box-sortables ui-sortable">
 					<div id="dashboard_quick_press" class="postbox ">
-						<h2 class="hndle ui-sortable-handle">
-							<span>
-								<span class="hide-if-no-js"><?php _e( 'General Options', 'gwslau_login_as_user' ); ?></span> 
-								<span class="hide-if-js"><?php _e( 'General Options', 'gwslau_login_as_user' ); ?></span>
-							</span>
-						</h2>
 						<div class="inside">
 							
 							<form action="options.php" method="post">
@@ -61,12 +59,15 @@ function gwslau_login_as_settings_page_html() {
  <?php
 }
 
+/**
+ * Register settings for Log in as users admin menu
+ */
 add_action('admin_init', 'gwslau_loginas_settings_init');
 function gwslau_loginas_settings_init() {
 	register_setting( 'gwslau_login_as', 'gwslau_loginas_options');
 	add_settings_section(
 		'gwslau_loginas_section_developers',
-		__( 'Main Options', 'gwslau_login_as_user' ),
+		__( 'General Options', 'gwslau_login_as_user' ),
 		array(),
 		'gwslau_login_as'
 	);
@@ -186,34 +187,32 @@ function gwslau_loginas_field_type_roles( $args ) {
 
 function gwslau_loginas_enable_for($args){
 	$options = get_option( 'gwslau_loginas_options' );
-	$value = isset($options[ $args['label_for']]) ? $options[ $args['label_for']] : array();
-	?>
+	$value = isset($options[ $args['label_for']]) ? $options[ $args['label_for']] : array(); ?>
+
+	<label class="gwslau-containercheckbox">
+		<input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][users_page]" value="users_page" <?php isset($value["users_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
+		Users Page
+	</label>
+
+	<label class="gwslau-containercheckbox">
+		<input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][users_profile_page]" value="users_profile_page" <?php isset($value["users_profile_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
+		User's Profile Page
+	</label>
+
+	<?php
+	if ( is_plugin_active('woocommerce/woocommerce.php') ) {
+		?>
 		<label class="gwslau-containercheckbox">
-		  <input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][users_page]" value="users_page" <?php isset($value["users_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
-		  Users Page
+		<input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][orders_page]" value="orders_page" <?php isset($value["orders_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
+		Orders Page
 		</label>
 
 		<label class="gwslau-containercheckbox">
-		  <input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][users_profile_page]" value="users_profile_page" <?php isset($value["users_profile_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
-		  User's Profile Page
+		<input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][order_edit_page]" value="order_edit_page" <?php isset($value["order_edit_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
+		Order Edit Page
 		</label>
-
-        <?php
-        if ( is_plugin_active('woocommerce/woocommerce.php') ) {
-            ?>
-            <label class="gwslau-containercheckbox">
-            <input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][orders_page]" value="orders_page" <?php isset($value["orders_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
-            Orders Page
-            </label>
-    
-            <label class="gwslau-containercheckbox">
-            <input type="checkbox" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>][order_edit_page]" value="order_edit_page" <?php isset($value["order_edit_page"]) ? esc_attr_e('checked') : esc_attr_e('') ?>>
-            Order Edit Page
-            </label>
-            <?php
-        }
-        ?>
-	 <?php
+		<?php
+	}
 }
 
 function gwslau_loginas_redirect_to($args){
