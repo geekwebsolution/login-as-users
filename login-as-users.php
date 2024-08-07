@@ -185,7 +185,7 @@ class user_switcher {
 				break;
 
 			// We're attempting to switch back to the originating user:
-			case 'switch_to_olduser':
+			case 'gwslau_switch_to_olduser':
 				// Fetch the originating user data:
 				$old_user = self::get_old_user();
 				if ( ! $old_user ) {
@@ -198,7 +198,7 @@ class user_switcher {
 				}
 
 				// Check intent:
-				check_admin_referer( "switch_to_olduser_{$old_user->ID}" );
+				check_admin_referer( "gwslau_switch_to_olduser_{$old_user->ID}" );
 
 				// Switch user:
 				if ( gwslau_switch_to_user( $old_user->ID, self::remember(), false ) ) {
@@ -223,15 +223,15 @@ class user_switcher {
 				break;
 
 			// We're attempting to switch off the current user:
-			case 'switch_off':
+			case 'gwslau_switch_off':
 				// Check authentication:
-				if ( ! $current_user || ! current_user_can( 'switch_off' ) ) {
+				if ( ! $current_user || ! current_user_can( 'gwslau_switch_off' ) ) {
 					/* Translators: "switch off" means to temporarily log out */
 					wp_die( esc_html__( 'Could not switch off.', 'login-as-users' ), 403 );
 				}
 
 				// Check intent:
-				check_admin_referer( "switch_off_{$current_user->ID}" );
+				check_admin_referer( "gwslau_switch_off_{$current_user->ID}" );
 
 				// Switch off:
 				if ( gwslau_switch_off_user() ) {
@@ -261,31 +261,14 @@ class user_switcher {
 	protected static function gwslau_get_redirect( ?WP_User $new_user = null, ?WP_User $old_user = null ) {
 		$redirect_to = '';
 
-		
-
 		if ( ! $new_user ) {
-			/** This filter is documented in wp-login.php */
 			$redirect_to = '';
-			// $redirect_to = apply_filters( 'logout_redirect', $redirect_to, $requested_redirect_to, $old_user );
 		} else {
 			$options = get_option( 'gwslau_loginas_options' );
 			$redirect_to = home_url()."/".$options['gwslau_loginas_redirect'];
-			/** This filter is documented in wp-login.php */
-			// $redirect_to = apply_filters( 'login_redirect', $redirect_to, $requested_redirect_to, $new_user );
 		}
 
-		/**
-		 * Filters the redirect location after a user switches to another account or switches off.
-		 *
-		 * @since 1.7.0
-		 *
-		 * @param string       $redirect_to   The target redirect location, or an empty string if none is specified.
-		 * @param string|null  $redirect_type The redirect type, see the `user_switcher::REDIRECT_*` constants.
-		 * @param WP_User|null $new_user      The user being switched to, or null if there is none.
-		 * @param WP_User|null $old_user      The user being switched from, or null if there is none.
-		 */
 		return $redirect_to;
-		// return apply_filters( 'user_switcher_redirect_to', $redirect_to, $redirect_type, $new_user, $old_user );
 	}
 
 
@@ -374,10 +357,10 @@ class user_switcher {
 					</div>                
 				</div>',
 				esc_attr($loginas_sticky_class),
-				__('You are logged in as ', 'w'),
+				__('You are logged in as ', 'login-as-users'),
 				esc_html($user_name_data),
 				esc_url( $url ),
-				__('Back To Your Account', 'gwslau_login_as_user'),
+				__('Back To Your Account', 'login-as-users'),
 				esc_url(GWSLAU_PLUGIN_URL . '/assets/images/user-icon.svg')
 			);
 		}
@@ -425,9 +408,9 @@ class user_switcher {
 	 */
 	public static function switch_back_url( WP_User $user ) {
 		return wp_nonce_url( add_query_arg( [
-			'action' => 'switch_to_olduser',
+			'action' => 'gwslau_switch_to_olduser',
 			'nr' => 1,
-		], wp_login_url() ), "switch_to_olduser_{$user->ID}" );
+		], wp_login_url() ), "gwslau_switch_to_olduser_{$user->ID}" );
 	}
 
 
@@ -462,16 +445,14 @@ class user_switcher {
 				return $user_caps;
 			}
 
-			// $user_caps['gwslau_switch_to_user'] = ( user_can( $user->ID, 'edit_user', $args[2] ) && ( $args[2] !== $user->ID ) );
 			$user_caps['gwslau_switch_to_user'] = ( !gwslau_user_conditional($options) );
-		} elseif ( 'switch_off' === $args[0] ) {
+		} elseif ( 'gwslau_switch_off' === $args[0] ) {
 			if ( array_key_exists( 'switch_users', $user_caps ) ) {
-				$user_caps['switch_off'] = $user_caps['switch_users'];
+				$user_caps['gwslau_switch_off'] = $user_caps['switch_users'];
 				return $user_caps;
 			}
 
-			// $user_caps['switch_off'] = user_can( $user->ID, 'edit_users' );
-			$user_caps['switch_off'] = ( !gwslau_user_conditional($options) );
+			$user_caps['gwslau_switch_off'] = ( !gwslau_user_conditional($options) );
 		}
 
 		return $user_caps;
@@ -539,44 +520,8 @@ if ( ! function_exists( 'gwslau_user_switcher_set_olduser_cookie' ) ) {
 			return;
 		}
 
-		/**
-		 * Fires immediately before the Login as users authentication cookie is set.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @param string $auth_cookie JSON-encoded array of authentication cookie values.
-		 * @param int    $expiration  The time when the authentication cookie expires as a UNIX timestamp.
-		 * @param int    $old_user_id User ID.
-		 * @param string $scheme      Authentication scheme. Values include 'auth' or 'secure_auth'.
-		 * @param string $token       User's session token to use for the latest cookie.
-		 */
-		do_action( 'set_GWSLAU_LOGIN_AS_USERS_COOKIE', $auth_cookie, $expiration, $old_user_id, $scheme, $token );
-
 		$scheme = 'logged_in';
 
-		/**
-		 * Fires immediately before the Login as users old user cookie is set.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @param string $olduser_cookie The old user cookie value.
-		 * @param int    $expiration     The time when the logged-in authentication cookie expires as a UNIX timestamp.
-		 * @param int    $old_user_id    User ID.
-		 * @param string $scheme         Authentication scheme. Values include 'auth' or 'secure_auth'.
-		 * @param string $token          User's session token to use for this cookie.
-		 */
-		do_action( 'set_olduser_cookie', $olduser_cookie, $expiration, $old_user_id, $scheme, $token );
-
-		/**
-		 * Allows preventing auth cookies from actually being sent to the client.
-		 *
-		 * @since 1.5.4
-		 *
-		 * @param bool $send Whether to send auth cookies to the client.
-		 */
-		if ( ! apply_filters( 'user_switcher_send_auth_cookies', true ) ) {
-			return;
-		}
 
 		setcookie( $auth_cookie_name, $auth_cookie, $expiration, SITECOOKIEPATH, COOKIE_DOMAIN, $secure_auth_cookie, true );
 		setcookie( GWSLAU_LOGIN_AS_USERS_OLDUSER_COOKIE, $olduser_cookie, $expiration, COOKIEPATH, COOKIE_DOMAIN, $secure_olduser_cookie, true );
@@ -593,17 +538,6 @@ if ( ! function_exists( 'gwslau_user_switcher_clear_olduser_cookie' ) ) {
 			array_pop( $auth_cookie );
 		}
 		if ( $clear_all || empty( $auth_cookie ) ) {
-			/**
-			 * Fires just before the Login as users cookies are cleared.
-			 *
-			 * @since 1.4.0
-			 */
-			do_action( 'clear_olduser_cookie' );
-
-			/** This filter is documented in login-as-users.php */
-			if ( ! apply_filters( 'user_switcher_send_auth_cookies', true ) ) {
-				return;
-			}
 
 			$expire = time() - 31536000;
 			setcookie( GWSLAU_LOGIN_AS_USERS_COOKIE,         ' ', $expire, SITECOOKIEPATH, COOKIE_DOMAIN );
@@ -711,37 +645,6 @@ if ( ! function_exists( 'gwslau_switch_to_user' ) ) {
 
 		remove_filter( 'attach_session_information', $session_filter, 99 );
 
-		if ( $set_old_user && $old_user_id ) {
-			/**
-			 * Fires when a user switches to another user account.
-			 *
-			 * @since 0.6.0
-			 * @since 1.4.0 The `$new_token` and `$old_token` parameters were added.
-			 *
-			 * @param int    $user_id     The ID of the user being switched to.
-			 * @param int    $old_user_id The ID of the user being switched from.
-			 * @param string $new_token   The token of the session of the user being switched to. Can be an empty string
-			 *                            or a token for a session that may or may not still be valid.
-			 * @param string $old_token   The token of the session of the user being switched from.
-			 */
-			do_action( 'gwslau_switch_to_user', $user_id, $old_user_id, $new_token, $old_token );
-		} else {
-			/**
-			 * Fires when a user switches back to their originating account.
-			 *
-			 * @since 0.6.0
-			 * @since 1.4.0 The `$new_token` and `$old_token` parameters were added.
-			 *
-			 * @param int       $user_id     The ID of the user being switched back to.
-			 * @param int|false $old_user_id The ID of the user being switched from, or false if the user is switching back
-			 *                               after having been switched off.
-			 * @param string    $new_token   The token of the session of the user being switched to. Can be an empty string
-			 *                               or a token for a session that may or may not still be valid.
-			 * @param string    $old_token   The token of the session of the user being switched from.
-			 */
-			do_action( 'switch_back_user', $user_id, $old_user_id, $new_token, $old_token );
-		}
-
 		if ( $old_token && $old_user_id && ! $set_old_user ) {
 			// When switching back, destroy the session for the old user
 			$manager = WP_Session_Tokens::get_instance( $old_user_id );
@@ -769,17 +672,6 @@ if ( ! function_exists( 'gwslau_switch_off_user' ) ) {
 		gwslau_user_switcher_set_olduser_cookie( $old_user_id, false, $old_token );
 		wp_clear_auth_cookie();
 		wp_set_current_user( 0 );
-
-		/**
-		 * Fires when a user switches off.
-		 *
-		 * @since 0.6.0
-		 * @since 1.4.0 The `$old_token` parameter was added.
-		 *
-		 * @param int    $old_user_id The ID of the Login as users off.
-		 * @param string $old_token   The token of the session of the Login as users off.
-		 */
-		do_action( 'gwslau_switch_off_user', $old_user_id, $old_token );
 
 		return true;
 	}

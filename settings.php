@@ -22,14 +22,14 @@ function gwslau_login_as_settings_page_html() {
 	}
 
 	if ( isset( $_GET['settings-updated'] ) ) {
-		add_settings_error( 'gwslau_loginas_messages', 'loginas_message', __( 'Settings Saved', 'gwslau_login_as_user' ), 'updated' );
+		add_settings_error( 'gwslau_loginas_messages', 'loginas_message', __( 'Settings Saved', 'login-as-users' ), 'updated' );
 	}
 	settings_errors( 'gwslau_loginas_messages' );
 	
 	$option_data = get_option('gwslau_loginas_options');
 	?>
 
-	<h1><?php _e( 'Login As Customer or User', 'gwslau_login_as_user' );?></h1>
+	<h1><?php _e( 'Login As Customer or User', 'login-as-users' );?></h1>
 	<div id="">
 		<div id="dashboard-widgets" class="metabox-holder">
 			<div id="" class="">
@@ -67,13 +67,13 @@ function gwslau_loginas_settings_init() {
 	register_setting( 'gwslau_login_as', 'gwslau_loginas_options');
 	add_settings_section(
 		'gwslau_loginas_section_developers',
-		__( 'General Options', 'gwslau_login_as_user' ),
+		__( 'General Options', 'login-as-users' ),
 		array(),
 		'gwslau_login_as'
 	);
 	add_settings_field(
 		'gwslau_loginas_status', 
-		__( 'Plugin Status:', 'gwslau_login_as_user' ),
+		__( 'Plugin Status:', 'login-as-users' ),
 		'gwslau_loginas_field_type_checkbox',
 		'gwslau_login_as',
 		'gwslau_loginas_section_developers',
@@ -86,7 +86,7 @@ function gwslau_loginas_settings_init() {
 	
 	add_settings_field(
 		'gwslau_loginas_role', 
-		__( 'Buttons Accessibility:', 'gwslau_login_as_user' ),
+		__( 'Buttons Accessibility:', 'login-as-users' ),
 		'gwslau_loginas_field_type_roles',
 		'gwslau_login_as',
 		'gwslau_loginas_section_developers',
@@ -99,7 +99,7 @@ function gwslau_loginas_settings_init() {
 
 	add_settings_field(
 		'gwslau_loginas_for', 
-		__( 'Enable Plugin In:', 'gwslau_login_as_user' ),
+		__( 'Enable Plugin In:', 'login-as-users' ),
 		'gwslau_loginas_enable_for',
 		'gwslau_login_as',
 		'gwslau_loginas_section_developers',
@@ -112,7 +112,7 @@ function gwslau_loginas_settings_init() {
 
 	add_settings_field(
 		'gwslau_loginas_redirect', 
-		__( 'Redirect To:', 'gwslau_login_as_user' ),
+		__( 'Redirect To:', 'login-as-users' ),
 		'gwslau_loginas_redirect_to',
 		'gwslau_login_as',
 		'gwslau_loginas_section_developers',
@@ -125,7 +125,7 @@ function gwslau_loginas_settings_init() {
 
 	add_settings_field(
 		'gwslau_loginas_name_show', 
-		__( 'Which Name to Show?:', 'gwslau_login_as_user' ),
+		__( 'Which Name to Show?:', 'login-as-users' ),
 		'gwslau_loginas_which_name_show',
 		'gwslau_login_as',
 		'gwslau_loginas_section_developers',
@@ -138,7 +138,7 @@ function gwslau_loginas_settings_init() {
 
 	add_settings_field(
 		'gwslau_loginas_sticky_position', 
-		__( 'Sticy Logout Box Position:', 'gwslau_login_as_user' ),
+		__( 'Sticy Logout Box Position:', 'login-as-users' ),
 		'gwslau_loginas_set_sticky_position',
 		'gwslau_login_as',
 		'gwslau_loginas_section_developers',
@@ -154,13 +154,13 @@ function gwslau_loginas_settings_init() {
 function gwslau_loginas_field_type_checkbox( $args ) {
 	$options = get_option( 'gwslau_loginas_options' );
 	?>
-	<span class="on_off off"><?php esc_html_e( 'OFF', 'gwslau_login_as_user' ); ?></span>
+	<span class="on_off off"><?php esc_html_e( 'OFF', 'login-as-users' ); ?></span>
 	<label class="gwslau-switch">
 		<input type="checkbox" value="1" id="<?php esc_attr_e( $args['label_for'] ); ?>" data-custom="<?php esc_attr_e( $args['gwslau_loginas_custom_data'] ); ?>" name="gwslau_loginas_options[<?php esc_attr_e( $args['label_for'] ); ?>]"  <?php isset( $options[ $args['label_for']] ) ? esc_html_e( checked( $options[ $args['label_for'] ], '1', false ) ) : esc_html_e( '' ); ?>>
 	</label>
-	<span class="on_off on"><?php esc_html_e( 'ON', 'gwslau_login_as_user' ); ?></span>
+	<span class="on_off on"><?php esc_html_e( 'ON', 'login-as-users' ); ?></span>
 	<div class="gwslau-description">
-		<p><?php esc_html_e( 'Using this option, you can enable or disable the plugin functionality', 'gwslau_login_as_user' ); ?></p>
+		<p><?php esc_html_e( 'Using this option, you can enable or disable the plugin functionality', 'login-as-users' ); ?></p>
 	</div>
 	<?php
 }
