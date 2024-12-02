@@ -3,7 +3,7 @@
 Plugin Name: Login As Users
 Description: Using this plugin, admin can access user's account in one click.
 Author: Geek Code Lab
-Version: 1.4.4
+Version: 1.5.0
 Author URI: https://geekcodelab.com/
 Text Domain: login-as-users
 */
@@ -16,10 +16,20 @@ if(!defined("GWSLAU_PLUGIN_DIR_PATH"))
 if(!defined("GWSLAU_PLUGIN_URL"))
 	define("GWSLAU_PLUGIN_URL",plugins_url().'/'.basename(dirname(__FILE__)));
 
-define("GWSLAU_BUILD",'1.4.4');
+if (!defined("GWSLAU_PLUGIN_BASENAME"))
+define("GWSLAU_PLUGIN_BASENAME", plugin_basename(__FILE__));
+
+if (!defined("GWSLAU_PLUGIN_DIR"))
+	define("GWSLAU_PLUGIN_DIR", plugin_basename(__DIR__));
+
+if (!defined("GWSLAU_BUILD"))
+	define("GWSLAU_BUILD",'1.4.4');
+
+require(GWSLAU_PLUGIN_DIR_PATH . 'updater/updater.php');
 
 register_activation_hook( __FILE__, 'gwslau_reg_activation_callback' );
 function gwslau_reg_activation_callback() {	
+	gwslau_updater_activate();
 
 	$gwslau_loginas_status = 1;
 	$gwslau_loginas_role = array("Administrator" => "Administrator");
@@ -42,6 +52,8 @@ function gwslau_reg_activation_callback() {
 		update_option( 'gwslau_loginas_options', $def_data );
 	}
 }
+add_action('upgrader_process_complete', 'gwslau_updater_activate'); // remove  transient  on plugin  update
+
 
 require_once GWSLAU_PLUGIN_DIR_PATH . 'options.php';
 require_once GWSLAU_PLUGIN_DIR_PATH . 'settings.php';
