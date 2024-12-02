@@ -23,7 +23,7 @@ if (!defined("GWSLAU_PLUGIN_DIR"))
 	define("GWSLAU_PLUGIN_DIR", plugin_basename(__DIR__));
 
 if (!defined("GWSLAU_BUILD"))
-	define("GWSLAU_BUILD",'1.4.4');
+	define("GWSLAU_BUILD",'1.5.0');
 
 require(GWSLAU_PLUGIN_DIR_PATH . 'updater/updater.php');
 
