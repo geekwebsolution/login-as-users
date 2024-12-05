@@ -33,7 +33,6 @@ if (!class_exists('GWSLAU_Update_Checker')) {
                     'headers' => ['Accept' => 'application/json'],
                 ]
             );
-            //$this->get_api . "gcl-free-plugins/plugins/{$this->plugin_slug}/plugininfo.json",
             if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
                 return false;
             }

@@ -52,6 +52,11 @@ After Plugin Active go to Settings-> Login As User.
 7. You will see this CTA after minimizing the main CTA, you can click on this to open the main CTA which have "Back To Your Account" Button.
 
 == Changelog ==
+
+= 1.5.0 =
+ Fix Bug
+ Added auto updated function
+
 = 1.4.4 =
 * Fixed:
   Nonce Verification for User Switching
